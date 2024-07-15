@@ -1,0 +1,38 @@
+clear
+% 设置图像的尺寸
+img_height = 100;
+img_width = 200;
+
+% 创建一个全A成分的图像矩阵
+img = ones(img_height, img_width) * 255; % A成分用白色表示
+
+% 定义随机分布的区间
+random_start = 31; % MATLAB的索引从1开始，所以实际为x=30处
+random_end = 160;
+
+% 定义成分A和成分B的比例
+fraction_A = 0.95;
+fraction_B = 0.05;
+
+% 生成随机区域内的成分分布
+num_random_pixels = (random_end - random_start + 1) * img_height;
+num_B_pixels = round(num_random_pixels * fraction_B / 9); % 由于B物质是3x3的正方形，实际需要的B物质数除以9
+
+% 生成B物质的正方形并随机放置
+for i = 1:num_B_pixels
+    while true
+        row = randi([1, img_height-2]);
+        col = randi([random_start, random_end-2]);
+        % 检查是否可以放置正方形
+        if all(all(img(row:row+2, col:col+2) == 255))
+            img(row:row+2, col:col+2) = 0; % 将3x3区域设置为B物质，黑色表示
+            break;
+        end
+    end
+end
+
+% 显示图像
+imshow(img, [0 255]);
+
+% 保存图像
+imwrite(img, 'generated_image_with_squares.png');
